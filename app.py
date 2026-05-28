@@ -7,41 +7,66 @@ st.set_page_config(
     layout="centered"
 )
 
+# Header Image
 st.image(
-    "Spain Picture.jpg",
-    caption="Barcelona, Spain 🇪🇸 — planning the next adventure",
+    "SRDAHF.png",
+    caption="Andrew & Stephanie 🌺",
     use_container_width=True
 )
 
+# Title
 st.title("🌺 Andrew & Stephanie's Hawaii AI Planner")
 
-st.markdown(
-    """
-    Planning our Hawaii adventure around the Honolulu wedding
-    on October 7–9 while optimizing Delta flights, island hopping,
-    romance, food, and relaxation.
-    """
-)
+st.markdown("""
+Planning our Hawaii adventure around the Honolulu wedding
+on October 7-9 while optimizing Delta flights, island hopping,
+romance, food, relaxation, and adventure.
+""")
 
+# Wedding Info
 st.info(
-    "Wedding anchor dates: October 7, 8, and 9 in Honolulu, Oahu. "
-    "We must be in Honolulu for these dates."
+    "Wedding dates are October 7, 8, and 9 in Honolulu, Oahu. "
+    "The itinerary should keep us in Honolulu for those dates."
 )
 
-st.subheader("Trip Basics")
+# Trip Settings
+st.subheader("✈️ Trip Planning")
 
 island_hopping = st.selectbox(
-    "Island plan",
-    ["Not Sure - Recommend", "Oahu Only", "Two Islands", "Three Islands"]
+    "Island Plan",
+    [
+        "Not Sure - Recommend",
+        "Oahu Only",
+        "Two Islands",
+        "Three Islands"
+    ]
 )
 
-before_wedding_days = st.slider("Days before the wedding in Hawaii", 0, 10, 3)
-after_wedding_days = st.slider("Days after the wedding in Hawaii", 0, 10, 3)
+before_wedding_days = st.slider(
+    "Days in Hawaii BEFORE the wedding",
+    0,
+    10,
+    3
+)
 
-budget = st.selectbox("Budget", ["Budget", "Moderate", "Luxury"])
+after_wedding_days = st.slider(
+    "Days in Hawaii AFTER the wedding",
+    0,
+    10,
+    4
+)
+
+budget = st.selectbox(
+    "Budget",
+    [
+        "Budget",
+        "Moderate",
+        "Luxury"
+    ]
+)
 
 vibe = st.multiselect(
-    "Vacation style",
+    "Vacation Style",
     [
         "Romantic",
         "Adventure",
@@ -54,98 +79,116 @@ vibe = st.multiselect(
         "Culture",
         "Nightlife"
     ],
-    default=["Romantic", "Food", "Beaches"]
-)
-
-notes = st.text_area(
-    "Anything special?",
-    "We want this to feel romantic and memorable, but not overly rushed."
-)
-
-st.subheader("Flight Details")
-
-st.write(
-    "Stephanie will fly round trip from Syracuse to Seattle. "
-    "Then Andrew and Stephanie will fly together round trip from Seattle to Hawaii."
-)
-
-flight_preference = st.selectbox(
-    "Flight preference",
-    [
-        "Delta flights only where possible",
-        "Delta preferred but allow partners if needed",
-        "Best schedule with Delta focus",
-        "Use miles if possible"
+    default=[
+        "Romantic",
+        "Food",
+        "Beaches"
     ]
 )
 
-if st.button("Create Our Hawaii Trip Plan"):
+notes = st.text_area(
+    "Additional Notes",
+    "We want an amazing romantic trip that balances relaxation, adventure, great food, and wedding obligations."
+)
 
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Flight Section
+st.subheader("🛫 Flight Preferences")
 
-    total_hawaii_days = before_wedding_days + 3 + after_wedding_days
+flight_preference = st.selectbox(
+    "Flight Preference",
+    [
+        "Delta Only",
+        "Delta Preferred",
+        "Use SkyMiles If Possible",
+        "Best Delta Schedule"
+    ]
+)
+
+if st.button("🌴 Create Our Hawaii Trip Plan"):
+
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
+
+    total_hawaii_days = (
+        before_wedding_days
+        + 3
+        + after_wedding_days
+    )
 
     prompt = f"""
-    Create a Hawaii vacation plan for Andrew and Stephanie.
+Create a personalized Hawaii vacation plan for Andrew and Stephanie.
 
-    IMPORTANT WEDDING DETAILS:
-    - Wedding events are in Honolulu, Oahu.
-    - Wedding dates are October 7, October 8, and October 9.
-    - Andrew and Stephanie must be in Honolulu/Oahu for those three dates.
-    - Keep wedding days mostly open and realistic.
+ABOUT US:
+- Andrew lives in Seattle.
+- Stephanie lives in Syracuse, New York.
+- Stephanie will fly Syracuse -> Seattle before Hawaii.
+- Andrew and Stephanie will then fly together Seattle -> Hawaii.
+- After Hawaii they will fly together Hawaii -> Seattle.
+- Stephanie will then fly Seattle -> Syracuse.
 
-    TRAVEL LOGISTICS:
-    - Andrew lives in Seattle and departs from SEA.
-    - Stephanie lives in Syracuse, New York and departs from SYR.
-    - Stephanie will fly round trip from Syracuse to Seattle.
-    - Andrew and Stephanie will then fly together round trip from Seattle to Hawaii.
-    - Hawaii flights should be Delta-focused.
-    - Flight preference: {flight_preference}
+WEDDING DETAILS:
+- Wedding events are October 7, 8, and 9.
+- Wedding location is Honolulu, Oahu.
+- We must be in Honolulu for those dates.
+- Keep wedding days relatively open.
 
-    TRIP DETAILS:
-    - Days before wedding in Hawaii: {before_wedding_days}
-    - Wedding days: 3
-    - Days after wedding in Hawaii: {after_wedding_days}
-    - Total Hawaii trip length: {total_hawaii_days} days
-    - Island hopping preference: {island_hopping}
-    - Budget: {budget}
-    - Vacation style: {vibe}
-    - Notes: {notes}
+TRIP DETAILS:
+- Days before wedding: {before_wedding_days}
+- Days after wedding: {after_wedding_days}
+- Total Hawaii days: {total_hawaii_days}
+- Island plan: {island_hopping}
+- Budget: {budget}
+- Vacation style: {vibe}
+- Notes: {notes}
 
-    PLEASE INCLUDE:
+FLIGHT PREFERENCES:
+- {flight_preference}
+- Focus on Delta Airlines.
+- Suggest realistic Delta routing.
+- Suggest the best timing for Stephanie's Syracuse-Seattle flights.
+- Suggest the best timing for our Seattle-Hawaii flights.
+- Mention that live schedules and fares should be verified directly with Delta.
 
-    1. Recommended total trip dates using October 7-9 as fixed wedding dates.
-    2. Stephanie's flight strategy:
-       - Syracuse to Seattle before Hawaii
-       - Seattle to Syracuse after Hawaii
-       - Timing advice so she is not rushed.
-    3. Andrew and Stephanie's Delta-focused Hawaii flight strategy:
-       - Seattle to Hawaii
-       - Hawaii back to Seattle
-       - Mention that exact Delta flight times and prices need to be verified on Delta.com.
-    4. Whether they should stay only on Oahu or visit multiple islands.
-    5. Best island sequence before and after the wedding.
-    6. Realistic inter-island travel notes.
-    7. Day-by-day itinerary.
-    8. Light wedding-day suggestions.
-    9. Romantic ideas for Andrew and Stephanie.
-    10. Restaurant ideas.
-    11. Hidden gems.
-    12. Budget estimate.
-    13. Packing list.
-    14. Final recommendation on the ideal number of days before and after the wedding.
+PLEASE PROVIDE:
 
-    The plan should feel like a thoughtful trip designed specifically for Andrew and Stephanie as a couple,
-    balancing romance, adventure, food, relaxation, Delta flights, and wedding obligations.
+1. Three trip options:
+   - Short trip
+   - Medium trip
+   - Longer trip
 
-    Make it practical, romantic, impressive, and not too rushed.
-    """
+2. Recommended option and why.
 
-    with st.spinner("Planning Andrew and Stephanie's Hawaii trip..."):
+3. Best island combination.
+
+4. Detailed day-by-day itinerary.
+
+5. Romantic experiences.
+
+6. Great restaurants.
+
+7. Hidden gems.
+
+8. Budget estimate.
+
+9. Packing list.
+
+10. Suggested flight strategy.
+
+11. Whether we should spend more days before or after the wedding.
+
+Make the trip feel special, romantic, memorable, practical, and optimized around the wedding.
+"""
+
+    with st.spinner("Planning Andrew & Stephanie's Hawaii adventure..."):
+
         response = client.responses.create(
             model="gpt-5-nano",
             input=prompt
         )
 
-    st.subheader("🌴 Your AI Hawaii Trip Plan")
+    st.success("Trip plan complete!")
+
+    st.subheader("🌺 Your Hawaii Plan")
+
     st.markdown(response.output_text)
